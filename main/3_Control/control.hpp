@@ -22,18 +22,22 @@ struct Config {
     * yMin: it was chosen for a 4/6 arm. Set it to wherever the tip shouldn’t go below, such as the table surface.
     * vMax: it’s in length-units per second, so if the new arm is much bigger or smaller (or you changed units),
     * the same number gives a very different real speed.
+    *
+    *
+    * Reachable positions by the arm: maxY value is 2.65 < x < 52.93
      */
+
 
     // tip start position
     float startX = 0.0f;
-    float startY = 7.0f;
+    float startY = 40.0f;
 
-    float vMax = 12.0f;                  // tip speed at full stick, units/second
+    float vMax = 2.0f;                  //length units/second
                                         //lower if motor skips under load
-    float yMin = 0.5f;                  // keep tip above this line
+    float yMin = 2.65f;                 // keeps tip above this line
 
     uint32_t segmentUs = 20000;         // one straight-line segment = 20 ms
-    uint32_t maxStepsPerSeg = 16;       // per motor; 16 steps / 20 ms = 800 Hz. must be <= MAX_STEPS
+    uint32_t maxStepsPerSeg = 64;       // per motor; 16 steps / 20 ms = 800 Hz. must be <= MAX_STEPS
                                         //microstepping 1x @ maxStepsPerSeg = 16 is speed
                                         //microstepping 8x @ maxStepsPerSeg = 16 is speed / 8 (8x slower)
                                         //microstepping 8x @ maxStesPerSeg = 128 is = to speed @ 1x
@@ -41,7 +45,7 @@ struct Config {
 
     // Motor / mechanics. Set according to dip switch
     float stepAngleDeg = 1.8f; //1.8 is confirmed
-    int   microstep1 = 1, microstep2 = 1;
+    int   microstep1 = 4, microstep2 = 4;
     float gear1 = 3.0f, gear2 = 1.0f; //gear1, microstep1 are tied to stepsPerRad1_, one motor shoulder or elbow
                                         //same for microstep2, gear2
                                         //gear = driven wheel / motor wheel

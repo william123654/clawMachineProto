@@ -19,7 +19,7 @@ static const char* TAG = "CONTROL";
 namespace control {
 
 //control logic:
-//stick → unit vector → Cartesian step (dx,dy) → new target
+//stick → unit vector → point on plane (cartesian) (dx,dy) → new target
 //→ IK → joint angles → absolute step counts → deltas
 //→ both motors pulse for the same 20 ms
 
@@ -31,7 +31,7 @@ Control::Control(logic::JoyStickLogic& stick, logic::Position& pos,
     stepsPerRad1_ = (360.0f / cfg_.stepAngleDeg) * cfg_.microstep1 * cfg_.gear1 / twoPi;
     stepsPerRad2_ = (360.0f / cfg_.stepAngleDeg) * cfg_.microstep2 * cfg_.gear2 / twoPi;
 }
-
+//convert tip position to angular motor steps
 bool Control::toSteps(float x, float y, long& s1, long& s2) const {
     float a1, a2;
     if (!pos_.ik(x, y, a1, a2)) return false;
@@ -81,7 +81,7 @@ bool Control::plan(float dx, float dy, Plan& out) const {
     }
     return false;
 }
-
+//one 20ms movement sequence
 void Control::tick() {
     const TickType_t segTicks = std::max<TickType_t>(1, pdMS_TO_TICKS(cfg_.segmentUs / 1000));
 
@@ -139,10 +139,11 @@ void Control::tick() {
     shoulder_.wait();
     elbow_.wait();
 }
-
+//calls tick in a continous loop
 void Control::run() {
-    for (;;) tick();
+    while (true) {
+        tick();
+    }
 }
-
 
 }

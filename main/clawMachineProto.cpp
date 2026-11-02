@@ -51,16 +51,12 @@ extern "C" void app_main(void)
     }
     static logic::xyMotorLogic shoulder(shoulderDrv);
     static logic::xyMotorLogic elbow(elbowDrv);
-    static logic::Position pos(265.0f, 265.0f); // l1, l2
+    static logic::Position pos(26.5f, 26.5f); // l1, l2
     for (int i = 0; i < 200; i++) {
         printf("%d \n",stickDrv.getRawY());
         vTaskDelay(pdMS_TO_TICKS(20));
     }
     control::Config cfg;
-    cfg.startX = 100.0f;
-    cfg.startY = 100.0f;
-    cfg.microstep1 = cfg.microstep2 = 4;     // match your driver DIP switches
-    cfg.maxStepsPerSeg = 64;
     cfg.invertShoulder = true;               // if a joint spins the wrong way
     cfg.joyInvertY = true;                   // if the tip moves opposite to the stick
 
