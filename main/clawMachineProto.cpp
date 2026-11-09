@@ -58,8 +58,8 @@ extern "C" void app_main(void)
     }
     control::Config cfg;
     cfg.invertShoulder = true;               // if a joint spins the wrong way
-    cfg.joyInvertY = true;                   // if the tip moves opposite to the stick
-
+    cfg.joyInvertY = true;    // if the tip moves opposite to the stick
+    cfg.vMax = 6;
     static control::Control ctl(stick, pos, shoulder, elbow, cfg);
     ctl.begin();
     ctl.run();   // never returns
