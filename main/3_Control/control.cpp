@@ -66,6 +66,8 @@ bool Control::plan(float dx, float dy, Plan& out) const {
         float nx = tx_ + dx;
         float ny = ty_ + dy;
         if (ny < cfg_.yMin) return false;
+        //instead of returning false, define xMax, yMax
+        //set dy = 0, xMin = -40.0f and xMax = 40.0f or possibly fabsf(xMax) to remove or statments in tick() for bool move();
 
         long s1, s2;
         if (!toSteps(nx, ny, s1, s2)) return false;
@@ -99,9 +101,9 @@ void Control::tick() {
     float mag = hypotf(jx, jy);
     if (mag > 1.0f) { jx /= mag; jy /= mag; }   // square gate: keep diagonals from being faster
 
-    // 2. Cartesian displacement for this segment
-    const float dt = static_cast<float>(cfg_.segmentUs) * 1e-6f;
-    float dx = jx * cfg_.vMax * dt;
+    // 2. displacement for this segment
+    const float dt = static_cast<float>(cfg_.segmentUs) * 1E-6f; //scientific notation, converting 20ms to seconds
+    float dx = jx * cfg_.vMax * dt; //stick value * vMax * segmentUS(converted to seconds)
     float dy = jy * cfg_.vMax * dt;
 
     // 3. Plan it. If the full move is blocked (workspace edge), slide along each axis instead.
