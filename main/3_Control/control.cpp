@@ -60,27 +60,24 @@ void Control::begin() {
 // Try to move the tip by (dx, dy). If either motor would need more than maxStepsPerSeg,
 // shrink the whole move (both axes together) so the direction stays the same.
 bool Control::plan(float dx, float dy, Plan& out) const {
+    
+    float nx = tx_ + dx;
+    float ny = ty_ + dy;
+    if (ny < cfg_.yMin || ny > cfg_.yMax) ny = 0;
+    if (nx < cfg_.xMin || nx > cfg_.yMax) nx = 0;
+    //instead of returning false, define xMax, yMax
+    //set dy = 0, xMin = -40.0f and xMax = 40.0f or possibly fabsf(xMax) to remove or statments in tick() for bool move();
     if (dx == 0.0f && dy == 0.0f) return false;
 
-    for (int attempt = 0; attempt < 4; attempt++) {
-        float nx = tx_ + dx;
-        float ny = ty_ + dy;
-        if (ny < cfg_.yMin) return false;
-        //instead of returning false, define xMax, yMax
-        //set dy = 0, xMin = -40.0f and xMax = 40.0f or possibly fabsf(xMax) to remove or statments in tick() for bool move();
+    long s1, s2;
+    if (!toSteps(nx, ny, s1, s2)) return false;
 
-        long s1, s2;
-        if (!toSteps(nx, ny, s1, s2)) return false;
-
-        long m = std::max(labs(s1 - steps1_), labs(s2 - steps2_));
-        if (m <= static_cast<long>(cfg_.maxStepsPerSeg)) {
-            out = {nx, ny, s1, s2};
-            return true;
-        }
-        float k = 0.9f * static_cast<float>(cfg_.maxStepsPerSeg) / static_cast<float>(m);
-        dx *= k;
-        dy *= k;
+    long m = std::max(labs(s1 - steps1_), labs(s2 - steps2_));
+    if (m <= static_cast<long>(cfg_.maxStepsPerSeg)) {
+        out = {nx, ny, s1, s2};
+        return true;
     }
+    ESP_LOGI(TAG, "Too many steps for movement");
     return false;
 }
 //one 20ms movement sequence
@@ -108,7 +105,7 @@ void Control::tick() {
 
     // 3. Plan it. If the full move is blocked (workspace edge), slide along each axis instead.
     Plan p{};
-    bool moved = plan(dx, dy, p) || plan(dx, 0.0f, p) || plan(0.0f, dy, p);
+    bool moved = plan(dx, dy, p);
 
     long d1 = 0, d2 = 0;
     if (moved) {
