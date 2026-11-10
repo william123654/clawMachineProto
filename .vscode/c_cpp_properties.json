@@ -3,7 +3,8 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "C:/Espressif/tools/xtensa-esp-elf/esp-15.2.0_20251204/xtensa-esp-elf/xtensa-esp-elf/sys-include"
             ],
             "defines": [
                 "_DEBUG",
@@ -11,10 +12,15 @@
                 "_UNICODE"
             ],
             "windowsSdkVersion": "10.0.22621.0",
-            "compilerPath": "cl.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "intelliSenseMode": "windows-msvc-x64"
+            "compilerPath": "C:/Espressif/tools/xtensa-esp-elf/esp-15.2.0_20251204/xtensa-esp-elf/bin/xtensa-esp32-elf-g++.exe",
+            "intelliSenseMode": "windows-gcc-x64",
+            "compileCommands": [
+                "${workspaceFolder}/build/compile_commands.json"
+            ],
+            "mergeConfigurations": true
+
         }
     ],
     "version": 4

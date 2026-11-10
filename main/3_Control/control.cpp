@@ -60,26 +60,23 @@ void Control::begin() {
 // Try to move the tip by (dx, dy). If either motor would need more than maxStepsPerSeg,
 // shrink the whole move (both axes together) so the direction stays the same.
 bool Control::plan(float dx, float dy, Plan& out) const {
+    
+
+    float nx = tx_ + dx;
+    float ny = ty_ + dy;
+    if (ny < cfg_.yMin || ny > cfg_.yMax) dy = 0;
+    if (nx < cfg_.xMax || nx > cfg_.xMax) dx = 0;
     if (dx == 0.0f && dy == 0.0f) return false;
 
-    for (int attempt = 0; attempt < 4; attempt++) {
-        float nx = tx_ + dx;
-        float ny = ty_ + dy;
-        if (ny < cfg_.yMin || ny > cfg_.yMax) dy = 0;
-        if (nx < cfg_.xMax || nx > cfg_.xMax) dx = 0;
+    long s1, s2;
+    if (!toSteps(nx, ny, s1, s2)) return false;
 
-        long s1, s2;
-        if (!toSteps(nx, ny, s1, s2)) return false;
-
-        long m = std::max(labs(s1 - steps1_), labs(s2 - steps2_));
-        if (m <= static_cast<long>(cfg_.maxStepsPerSeg)) {
-            out = {nx, ny, s1, s2};
-            return true;
-        }
-        float k = 0.9f * static_cast<float>(cfg_.maxStepsPerSeg) / static_cast<float>(m);
-        dx *= k;
-        dy *= k;
+    long m = std::max(labs(s1 - steps1_), labs(s2 - steps2_));
+    if (m <= static_cast<long>(cfg_.maxStepsPerSeg)) {
+        out = {nx, ny, s1, s2};
+        return true;
     }
+    ESP_LOGI(TAG, "Movement faster than max velocity");
     return false;
 }
 //one 20ms movement sequence
