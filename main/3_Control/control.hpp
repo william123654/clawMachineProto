@@ -35,6 +35,9 @@ struct Config {
     float vMax = 8.0f;                  //length units/second
                                         //lower if motor skips under load
     float yMin = 2.65f;                 // keeps tip above this line
+    float yMax = 55.0f;
+    float xMin = -40.0f;
+    float xMax = 40.0f;
 
     uint32_t segmentUs = 20000;         // one straight-line segment = 20 ms
     uint32_t maxStepsPerSeg = 64;       // per motor; 16 steps / 20 ms = 800 Hz. must be <= MAX_STEPS
