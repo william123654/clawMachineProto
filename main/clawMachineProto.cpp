@@ -28,7 +28,7 @@ constexpr gpio_num_t pulsePinX = GPIO_NUM_5;
 constexpr gpio_num_t enaPinY = GPIO_NUM_23;  //change
 constexpr gpio_num_t dirPinY = GPIO_NUM_22; //change
 constexpr gpio_num_t pulsePinY = GPIO_NUM_4; //change
-constexpr gpio_num_t jPinX = GPIO_NUM_32;
+constexpr gpio_num_t jPinX = GPIO_NUM_33;
 constexpr gpio_num_t jPinY = GPIO_NUM_35;
 constexpr gpio_num_t jPinB = GPIO_NUM_26;
 
@@ -57,9 +57,12 @@ extern "C" void app_main(void)
         vTaskDelay(pdMS_TO_TICKS(20));
     }
     control::Config cfg;
-    cfg.invertShoulder = true;               // if a joint spins the wrong way
-    cfg.joyInvertY = true;    // if the tip moves opposite to the stick
-    cfg.vMax = 6;
+    cfg.invertShoulder = true;
+    cfg.invertElbow = false;
+    cfg.joyInvertX = false;
+    cfg.joyInvertY = true; // if the tip moves opposite to the stick
+    cfg.joySwapXY = true;
+    cfg.vMax = 3;
     static control::Control ctl(stick, pos, shoulder, elbow, cfg);
     ctl.begin();
     ctl.run();   // never returns

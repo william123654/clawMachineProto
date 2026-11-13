@@ -15,7 +15,7 @@ namespace driver {
 
 class JoyStickDriver {
     int xRaw, yRaw;
-    adc_channel_t xJoy = ADC_CHANNEL_4;//GPIO_NUM_32
+    adc_channel_t xJoy = ADC_CHANNEL_5;//GPIO_NUM_33
     adc_channel_t yJoy = ADC_CHANNEL_7;//GPIO_NUM_35
     gpio_num_t bPin;
     adc_oneshot_unit_handle_t joyStick = nullptr;
