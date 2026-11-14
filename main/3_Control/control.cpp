@@ -26,8 +26,8 @@ namespace control {
 
 Control::Control(logic::JoyStickLogic& stick, logic::Position& pos,
                  logic::xyMotorLogic& shoulder, logic::xyMotorLogic& elbow,
-                 const Config& cfg)
-    : stick_(stick), pos_(pos), shoulder_(shoulder), elbow_(elbow), cfg_(cfg) {
+                 const Config& cfg, logic::dropLogic& drop)
+    : stick_(stick), pos_(pos), shoulder_(shoulder), elbow_(elbow), cfg_(cfg), drop_(drop) {
     const float twoPi = 6.28318530718f;
     stepsPerRad1_ = (360.0f / cfg_.stepAngleDeg) * cfg_.microstep1 * cfg_.gear1 / twoPi;
     stepsPerRad2_ = (360.0f / cfg_.stepAngleDeg) * cfg_.microstep2 * cfg_.gear2 / twoPi;
@@ -45,6 +45,7 @@ bool Control::toSteps(float x, float y, long& s1, long& s2) const {
 void Control::begin() {
     shoulder_.enable(0);   // 0 = enabled on your drivers (same as your original main)
     elbow_.enable(0);
+    drop_.enable(0)
 
     tx_ = cfg_.startX;
     ty_ = cfg_.startY;
@@ -56,6 +57,8 @@ void Control::begin() {
     }
     ready_ = true;
     ESP_LOGI(TAG, "Ready. Home (%.2f, %.2f) -> steps (%ld, %ld)", tx_, ty_, steps1_, steps2_);
+
+    // declare button
 }
 
 // Try to move the tip by (dx, dy). If either motor would need more than maxStepsPerSeg,

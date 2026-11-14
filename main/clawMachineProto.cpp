@@ -43,7 +43,7 @@ extern "C" void app_main(void)
     // static: these hold big buffers / must outlive app_main's stack frame
     static driver::xyMotorDriver shoulderDrv(enaPinX, dirPinX, pulsePinX);  // motor at the origin
     static driver::xyMotorDriver elbowDrv(enaPinY, dirPinY, pulsePinY);     // motor at the joint between l1 and l2
-    static driver::zMotorDriver dropDrv(enaPinZ, dirPinZ, pulsePinZ);
+    static driver::xyMotorDriver dropDrv(enaPinZ, dirPinZ, pulsePinZ);
     static driver::JoyStickDriver stickDrv;
     stickDrv.init();
 
@@ -69,7 +69,7 @@ extern "C" void app_main(void)
     // cfg.joyInvertY = true; // if the tip moves opposite to the stick
     // cfg.joySwapXY = true;
     // cfg.vMax = 3;
-    static control::Control ctl(stick, pos, shoulder, elbow, cfg);
+    static control::Control ctl(stick, pos, shoulder, elbow, cfg, drop);
     ctl.begin();
     ctl.run();   // never returns
 

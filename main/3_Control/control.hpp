@@ -39,7 +39,7 @@ struct Config {
     float xMin = -40.0f;
     float xMax = 40.0f;
 
-    uint32_t segmentUs = 20000;         // one straight-line segment = 20 ms
+    static uint32_t segmentUs = 20000;         // one straight-line segment = 20 ms
     uint32_t maxStepsPerSeg = 64;       // per motor; 16 steps / 20 ms = 800 Hz. must be <= MAX_STEPS
                                         //microstepping 1x @ maxStepsPerSeg = 16 is speed
                                         //microstepping 8x @ maxStepsPerSeg = 16 is speed / 8 (8x slower)
@@ -62,6 +62,10 @@ struct Config {
     bool joySwapXY = false;
     bool joyInvertX = false;
     bool joyInvertY = false;
+
+    static int dropSteps = 500;
+    static float chuteX = 40.0f; //check
+    static float chuteY = 30.0f;
 };
 
 class Control {
@@ -69,6 +73,7 @@ class Control {
     logic::Position& pos_;
     logic::xyMotorLogic& shoulder_;
     logic::xyMotorLogic& elbow_;
+    logic::dropLogic& drop_;
     Config cfg_;
 
     float stepsPerRad1_, stepsPerRad2_;
@@ -88,7 +93,7 @@ class Control {
 public:
     Control(logic::JoyStickLogic& stick, logic::Position& pos,
             logic::xyMotorLogic& shoulder, logic::xyMotorLogic& elbow,
-            const Config& cfg = Config{});
+            const Config& cfg = Config{}, logic::dropLogic& drop);
 
     void begin();   // enable motors and set the home pose
     void tick();    // runs one segment (blocks ~segmentUs)
