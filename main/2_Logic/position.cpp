@@ -20,10 +20,16 @@ namespace logic {
         float c2 = (commandedX * commandedX + commandedY * commandedY - l1_ * l1_ - l2_ * l2_) / (2.0f * l1_ * l2_); //cos theta
         if (!(c2 >= -C2_LIMIT && c2 <= C2_LIMIT)) return false;  // also rejects NaN
 
-        float a2 = acosf(c2);
-        if (!elbowDown_) a2 = -a2;
-        theta2 = a2;
-        theta1 = atan2f(commandedY, commandedX) - atan2f(l2_ * sinf(a2), l1_ + l2_ * cosf(a2));
+        // float a2 = acosf(c2);
+        // if (!elbowDown_) a2 = -a2;
+        // theta2 = a2;
+        // theta1 = atan2f(commandedY, commandedX) - atan2f(l2_ * sinf(a2), l1_ + l2_ * cosf(a2));
+        // return true;
+        float s2 = -sqrt(1 - (c2) * (c2));
+        theta1 = (atan2f(s2, c2));
+        float k1 = l1_ + (l2_ * c2);
+        float k2 = l2_ * c2;
+        theta2 = (atan2f(commandedY, commandedX) - atan2f(k2, k1));
         return true;
     }
 

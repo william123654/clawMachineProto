@@ -34,12 +34,17 @@ struct Config {
 
     float vMax = 8.0f;                  //length units/second
                                         //lower if motor skips under load
-    float yMin = 2.65f;                 // keeps tip above this line
-    float yMax = 60.0f;
-    float xMin = -40.0f;
-    float xMax = 40.0f;
+    // float yMin = 2.65f;                 // keeps tip above this line
+    // float yMax = 60.0f;
+    // float xMin = -40.0f;
+    // float xMax = 40.0f;
 
-    static uint32_t segmentUs = 20000;         // one straight-line segment = 20 ms
+    float yMin = -28.0f;                 // keeps tip above this line
+    float yMax = 28.0f;
+    float xMin = 15.0f;
+    float xMax = 42.0f;
+
+    uint32_t segmentUs = 20000;         // one straight-line segment = 20 ms
     uint32_t maxStepsPerSeg = 64;       // per motor; 16 steps / 20 ms = 800 Hz. must be <= MAX_STEPS
                                         //microstepping 1x @ maxStepsPerSeg = 16 is speed
                                         //microstepping 8x @ maxStepsPerSeg = 16 is speed / 8 (8x slower)
@@ -48,24 +53,25 @@ struct Config {
 
     // Motor / mechanics. Set according to dip switch
     float stepAngleDeg = 1.8f; //1.8 is confirmed
-    int   microstep1 = 4, microstep2 = 4;
-    float gear1 = 40.0f /12.0f, gear2 = 45.0f / 16.0f; //gear1, microstep1 are tied to stepsPerRad1_, one motor shoulder or elbow
+    int   microstep1 = 16, microstep2 = 16;
+    //float gear1 = 40.0f /12.0f, gear2 = 45.0f / 16.0f; //gear1, microstep1 are tied to stepsPerRad1_, one motor shoulder or elbow
+    float gear1 = 45.0f/16.0f, gear2 = 40.0f / 12.0f;
                                         //same for microstep2, gear2
                                         //gear = driven wheel / motor wheel
                                         //diameter of wheel measured at the belt contact point + belt width
 
     bool invertShoulder = false;        // flip if the joint rotates the wrong way
     bool invertElbow = false;
-    bool elbowAbsolute = false;         // true if motor 2 sits at the base and drives link 2 via belt/linkage
+    bool elbowAbsolute = true;         // true if motor 2 sits at the base and drives link 2 via belt/linkage
 
     // Joystick orientation
     bool joySwapXY = false;
     bool joyInvertX = false;
     bool joyInvertY = false;
 
-    static int dropSteps = 500;
-    static float chuteX = 40.0f; //check
-    static float chuteY = 30.0f;
+    // static int dropSteps = 500;
+    // static float chuteX = 40.0f; //check
+    // static float chuteY = 30.0f;
 };
 
 class Control {

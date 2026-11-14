@@ -39,13 +39,13 @@ bool Control::toSteps(float x, float y, long& s1, long& s2) const {
     float m2 = cfg_.elbowAbsolute ? (a1 + a2) : a2;
     s1 = lroundf(a1 * stepsPerRad1);
     s2 = lroundf(m2 * stepsPerRad2);
+    //ESP_LOGI(TAG, "theta 1, theta 2: (%f, %f)", a1 * 180 / 3.14159265f, (m2) * 180 / 2.14159265f);
     return true;
 }
 
 void Control::begin() {
     shoulder_.enable(0);   // 0 = enabled on your drivers (same as your original main)
     elbow_.enable(0);
-    drop_.enable(0)
 
     tipX = cfg_.startX;
     tipY = cfg_.startY;
@@ -69,7 +69,7 @@ bool Control::plan(float segmentMoveX, float segmentMoveY, Plan& out) const {
 
     for (int attempt = 0; attempt < 4; attempt++) {
         // Block any axis that would leave the workspace (lets the tip slide along an edge)
-      //  if (ty_ + dy < cfg_.yMin || ty_ + dy > cfg_.yMax) dy = 0.0f;
+        if (tipY + segmentMoveY < cfg_.yMin || tipY + segmentMoveY > cfg_.yMax) segmentMoveY = 0.0f;
         if (tipX + segmentMoveX < cfg_.xMin || tipX + segmentMoveX > cfg_.xMax) segmentMoveX = 0.0f;
         if (segmentMoveX == 0.0f && segmentMoveY == 0.0f) return false;
 
@@ -131,7 +131,7 @@ void Control::tick() {
     static int n = 0;
     if (++n % 12 == 0) {   // about 4 times per second
         ESP_LOGI(TAG, "stick(%.2f,%.2f) tip(%.2f,%.2f) steps(%ld,%ld) d(%ld,%ld) moved=%d",
-                 joyStickX, joyStickY, tipX, tipY, steps1, steps2, shoulderSteps, elbowSteps, moved);
+                 joyStickX, joyStickY, tipY, tipX, steps1, steps2, shoulderSteps, elbowSteps, moved);
     }
     if (shoulderSteps == 0 && elbowSteps == 0) {
         vTaskDelay(segTicks);
