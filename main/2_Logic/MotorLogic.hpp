@@ -7,16 +7,16 @@
 #pragma once
 
 #include "freertos/FreeRTOS.h"
-#include "xyMotorDriver.hpp"
+#include "horizontalMotorDriver.hpp"
 
 
 namespace logic {
 
 
-class xyMotorLogic {
-    driver::xyMotorDriver& driver_;
+class MotorLogic {
+    driver::MotorDriver& driver_;
 public:
-    xyMotorLogic(driver::xyMotorDriver& driver);
+    MotorLogic(driver::MotorDriver& driver);
 
     //blocking move function
     void move(size_t steps, uint32_t freqHz);
@@ -24,6 +24,7 @@ public:
     bool start(uint32_t steps, uint32_t segmentUs);
     //wait for start() to finish
     void wait();
+    void moveABunch(size_t steps, uint32_t freqHz, uint8_t dir);
     void setDir(uint8_t);
     void enable(uint8_t);
 

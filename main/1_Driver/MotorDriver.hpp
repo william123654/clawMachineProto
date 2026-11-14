@@ -14,7 +14,7 @@
 
 namespace driver {
 
-class xyMotorDriver {
+class MotorDriver {
     gpio_num_t enaPin;
     gpio_num_t dirPin;
     gpio_num_t pulsePin;
@@ -29,7 +29,7 @@ class xyMotorDriver {
     bool busy = false;
 
 public:
-    xyMotorDriver(gpio_num_t, gpio_num_t, gpio_num_t);
+    MotorDriver(gpio_num_t, gpio_num_t, gpio_num_t);
     void init();
     //non-blocking move function
     bool startSteps(uint32_t steps, uint32_t segmentUs);

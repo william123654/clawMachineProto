@@ -8,7 +8,7 @@
 #include <cstdint>
 #include "joyStickLogic.hpp"
 #include "position.hpp"
-#include "xyMotorLogic.hpp"
+#include "MotorLogic.hpp"
 
 
 namespace control {
@@ -67,14 +67,14 @@ struct Config {
 class Control {
     logic::JoyStickLogic& stick_;
     logic::Position& pos_;
-    logic::xyMotorLogic& shoulder_;
-    logic::xyMotorLogic& elbow_;
+    logic::MotorLogic& shoulder_;
+    logic::MotorLogic& elbow_;
     Config cfg_;
 
-    float stepsPerRad1_, stepsPerRad2_;
-    float tx_ = 0, ty_ = 0;             // where the tip is supposed to be, commanded position
-    long steps1_ = 0, steps2_ = 0;      // absolute step counters (relative to home pose)
-    bool ready_ = false;                //false if home pose was invalid. tick() will do nothing
+    float stepsPerRad1, stepsPerRad2;
+    float tipX = 0, tipY = 0;             // where the tip is supposed to be, commanded position
+    long steps1 = 0, steps2 = 0;      // absolute step counters (relative to home pose)
+    bool ready = false;                //false if home pose was invalid. tick() will do nothing
 
     //one proposed move
     struct Plan {
@@ -83,18 +83,18 @@ class Control {
     };
 
     bool toSteps(float x, float y, long& s1, long& s2) const;
-    bool plan(float dx, float dy, Plan& out) const;
+    bool plan(float segmentMoveX, float segmentMoveY, Plan& out) const;
 
 public:
     Control(logic::JoyStickLogic& stick, logic::Position& pos,
-            logic::xyMotorLogic& shoulder, logic::xyMotorLogic& elbow,
+            logic::MotorLogic& shoulder, logic::MotorLogic& elbow,
             const Config& cfg = Config{});
 
     void begin();   // enable motors and set the home pose
     void tick();    // runs one segment (blocks ~segmentUs)
     void run();     // tick() forever
 
-    float tipX() const { return tx_; }
-    float tipY() const { return ty_; }
+    float tipPositionX() const { return tipX; }
+    float tipPositionY() const { return tipY; }
 };
 }
