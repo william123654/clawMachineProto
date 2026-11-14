@@ -49,7 +49,7 @@ struct Config {
     // Motor / mechanics. Set according to dip switch
     float stepAngleDeg = 1.8f; //1.8 is confirmed
     int   microstep1 = 4, microstep2 = 4;
-    float gear1 = 3.0f, gear2 = 40.0f / 12.0f; //gear1, microstep1 are tied to stepsPerRad1_, one motor shoulder or elbow
+    float gear1 = 40.0f /12.0f, gear2 = 45.0f / 16.0f; //gear1, microstep1 are tied to stepsPerRad1_, one motor shoulder or elbow
                                         //same for microstep2, gear2
                                         //gear = driven wheel / motor wheel
                                         //diameter of wheel measured at the belt contact point + belt width

@@ -54,11 +54,12 @@ extern "C" void app_main(void)
     static logic::Position pos(26.5f, 26.5f); // l1, l2
     control::Config cfg;
 
-    cfg.invertShoulder = true;
+    cfg.invertShoulder = false;
     cfg.invertElbow = false;
     cfg.joyInvertX = false;
-    cfg.joyInvertY = true;
-    cfg.joySwapXY = true;
+    cfg.joyInvertY = false;
+    cfg.joySwapXY = false;
+    cfg.elbowAbsolute = false;
     cfg.vMax = 3;
     static control::Control ctl(stick, pos, shoulder, elbow, cfg);
     ctl.begin();
