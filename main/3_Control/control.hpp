@@ -29,8 +29,8 @@ struct Config {
 
 
     // tip start position
-    float startX = 0.0f;
-    float startY = 48.0f;
+    float startX = 26.5f;
+    float startY = 26.5f;
 
     float vMax = 8.0f;                  //length units/second
                                         //lower if motor skips under load
@@ -49,7 +49,7 @@ struct Config {
     // Motor / mechanics. Set according to dip switch
     float stepAngleDeg = 1.8f; //1.8 is confirmed
     int   microstep1 = 4, microstep2 = 4;
-    float gear1 = 3.0f, gear2 = 40.0f / 12.0f; //gear1, microstep1 are tied to stepsPerRad1_, one motor shoulder or elbow
+    float gear1 = 40.0f / 12.0f, gear2 = 45.0f / 16.0f; //gear1, microstep1 are tied to stepsPerRad1_, one motor shoulder or elbow
                                         //same for microstep2, gear2
                                         //gear = driven wheel / motor wheel
                                         //diameter of wheel measured at the belt contact point + belt width
@@ -72,7 +72,7 @@ class Control {
     Config cfg_;
 
     float stepsPerRad1_, stepsPerRad2_;
-    float tx_ = 0, ty_ = 0;             // where the tip is supposed to be, commanded position
+    float tx_ = 0.0f, ty_ = 0.0f;             // where the tip is supposed to be, commanded position
     long steps1_ = 0, steps2_ = 0;      // absolute step counters (relative to home pose)
     bool ready_ = false;                //false if home pose was invalid. tick() will do nothing
 

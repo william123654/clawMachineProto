@@ -6,7 +6,11 @@
 #include <cstdint>
 #include <cmath>
 #include "position.hpp"
+#include "esp_log.h"
 #include "esp_err.h"
+#include "esp_rom_sys.h"
+
+static const char* TAG = "CONTROL";
 
 
 
@@ -23,6 +27,7 @@ namespace logic {
         if (!elbowDown_) a2 = -a2;
         th2 = a2;
         th1 = atan2f(y, x) - atan2f(l2_ * sinf(a2), l1_ + l2_ * cosf(a2));
+        //ESP_LOGI(TAG, "a1(%f), a2(%f)", th1*180 / 3.1415f, th2 * 180 / 3.1415f);
         return true;
     }
 

@@ -63,7 +63,7 @@ void Control::begin() {
 bool Control::plan(float dx, float dy, Plan& out) const {
     for (int attempt = 0; attempt < 4; attempt++) {
         // Block any axis that would leave the workspace (lets the tip slide along an edge)
-      //  if (ty_ + dy < cfg_.yMin || ty_ + dy > cfg_.yMax) dy = 0.0f;
+        if (ty_ + dy < cfg_.yMin || ty_ + dy > cfg_.yMax) dy = 0.0f;
         if (tx_ + dx < cfg_.xMin || tx_ + dx > cfg_.xMax) dx = 0.0f;
         if (dx == 0.0f && dy == 0.0f) return false;
 

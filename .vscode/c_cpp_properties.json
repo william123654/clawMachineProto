@@ -4,7 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/Espressif/tools/xtensa-esp-elf/esp-15.2.0_20251204/xtensa-esp-elf/xtensa-esp-elf/sys-include"
+                "C:/Espressif/tools/xtensa-esp-elf/esp-15.2.0_20251204/xtensa-esp-elf/xtensa-esp-elf/sys-include",
+                "C:/esp/v6.1/esp-idf/components/esp_driver_rmt/include"
             ],
             "defines": [
                 "_DEBUG",
@@ -20,7 +21,6 @@
                 "${workspaceFolder}/build/compile_commands.json"
             ],
             "mergeConfigurations": true
-
         }
     ],
     "version": 4
