@@ -8,7 +8,7 @@
 #include <cstdint>
 #include "joyStickLogic.hpp"
 #include "position.hpp"
-#include "xyMotorLogic.hpp"
+#include "MotorLogic.hpp"
 
 
 namespace control {
@@ -49,7 +49,7 @@ struct Config {
     // Motor / mechanics. Set according to dip switch
     float stepAngleDeg = 1.8f; //1.8 is confirmed
     int   microstep1 = 4, microstep2 = 4;
-    float gear1 = 40.0f / 12.0f, gear2 = 45.0f / 16.0f; //gear1, microstep1 are tied to stepsPerRad1_, one motor shoulder or elbow
+    float gear1 = 40.0f /12.0f, gear2 = 45.0f / 16.0f; //gear1, microstep1 are tied to stepsPerRad1_, one motor shoulder or elbow
                                         //same for microstep2, gear2
                                         //gear = driven wheel / motor wheel
                                         //diameter of wheel measured at the belt contact point + belt width
@@ -71,15 +71,14 @@ struct Config {
 class Control {
     logic::JoyStickLogic& stick_;
     logic::Position& pos_;
-    logic::xyMotorLogic& shoulder_;
-    logic::xyMotorLogic& elbow_;
-    logic::dropLogic& drop_;
+    logic::MotorLogic& shoulder_;
+    logic::MotorLogic& elbow_;
     Config cfg_;
 
-    float stepsPerRad1_, stepsPerRad2_;
-    float tx_ = 0.0f, ty_ = 0.0f;             // where the tip is supposed to be, commanded position
-    long steps1_ = 0, steps2_ = 0;      // absolute step counters (relative to home pose)
-    bool ready_ = false;                //false if home pose was invalid. tick() will do nothing
+    float stepsPerRad1, stepsPerRad2;
+    float tipX = 0, tipY = 0;             // where the tip is supposed to be, commanded position
+    long steps1 = 0, steps2 = 0;      // absolute step counters (relative to home pose)
+    bool ready = false;                //false if home pose was invalid. tick() will do nothing
 
     //one proposed move
     struct Plan {
@@ -88,18 +87,18 @@ class Control {
     };
 
     bool toSteps(float x, float y, long& s1, long& s2) const;
-    bool plan(float dx, float dy, Plan& out) const;
+    bool plan(float segmentMoveX, float segmentMoveY, Plan& out) const;
 
 public:
     Control(logic::JoyStickLogic& stick, logic::Position& pos,
-            logic::xyMotorLogic& shoulder, logic::xyMotorLogic& elbow,
-            const Config& cfg = Config{}, logic::dropLogic& drop);
+            logic::MotorLogic& shoulder, logic::MotorLogic& elbow,
+            const Config& cfg = Config{});
 
     void begin();   // enable motors and set the home pose
     void tick();    // runs one segment (blocks ~segmentUs)
     void run();     // tick() forever
 
-    float tipX() const { return tx_; }
-    float tipY() const { return ty_; }
+    float tipPositionX() const { return tipX; }
+    float tipPositionY() const { return tipY; }
 };
 }

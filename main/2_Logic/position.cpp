@@ -12,28 +12,24 @@
 
 static const char* TAG = "CONTROL";
 
-
-
-
 namespace logic {
     Position::Position(float l1, float l2, bool elbowDown)
         : l1_(l1), l2_(l2), elbowDown_(elbowDown) {}
 
-    bool Position::ik(float x, float y, float& th1, float& th2) const {
-        float c2 = (x * x + y * y - l1_ * l1_ - l2_ * l2_) / (2.0f * l1_ * l2_);
+    bool Position::inverseKinematics(float commandedX, float commandedY, float& theta1, float& theta2) const {
+        float c2 = (commandedX * commandedX + commandedY * commandedY - l1_ * l1_ - l2_ * l2_) / (2.0f * l1_ * l2_); //cos theta
         if (!(c2 >= -C2_LIMIT && c2 <= C2_LIMIT)) return false;  // also rejects NaN
 
         float a2 = acosf(c2);
         if (!elbowDown_) a2 = -a2;
-        th2 = a2;
-        th1 = atan2f(y, x) - atan2f(l2_ * sinf(a2), l1_ + l2_ * cosf(a2));
-        //ESP_LOGI(TAG, "a1(%f), a2(%f)", th1*180 / 3.1415f, th2 * 180 / 3.1415f);
+        theta2 = a2;
+        theta1 = atan2f(commandedY, commandedX) - atan2f(l2_ * sinf(a2), l1_ + l2_ * cosf(a2));
         return true;
     }
 
-    void Position::fk(float th1, float th2, float& x, float& y) const {
-        x = l1_ * cosf(th1) + l2_ * cosf(th1 + th2);
-        y = l1_ * sinf(th1) + l2_ * sinf(th1 + th2);
+    void Position::forwardKinematics(float theta1, float theta2, float& currentX, float& currentY) const {
+        currentX = l1_ * cosf(theta1) + l2_ * cosf(theta1 + theta2);
+        currentY = l1_ * sinf(theta1) + l2_ * sinf(theta1 + theta2);
     }
 
     float Position::minReach() const {

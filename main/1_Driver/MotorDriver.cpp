@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 
-#include "xyMotorDriver.hpp"
+#include "MotorDriver.hpp"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_err.h"
@@ -16,7 +16,7 @@ static const char* TAG = "MOTOR";
 
 namespace driver {
 
-xyMotorDriver::xyMotorDriver(gpio_num_t enaPin, gpio_num_t dirPin, gpio_num_t pulsePin) {
+MotorDriver::MotorDriver(gpio_num_t enaPin, gpio_num_t dirPin, gpio_num_t pulsePin) {
     this->enaPin = enaPin;
     this->dirPin = dirPin;
     this->pulsePin = pulsePin;
@@ -42,7 +42,7 @@ xyMotorDriver::xyMotorDriver(gpio_num_t enaPin, gpio_num_t dirPin, gpio_num_t pu
     ESP_LOGI(TAG, "RMT Encoder Initialization complete");
 }
 
-void xyMotorDriver::init() {
+void MotorDriver::init() {
 
     ESP_LOGI(TAG, "GPIO Initialization");
     gpio_config_t gConfig = {};
@@ -54,7 +54,7 @@ void xyMotorDriver::init() {
 
     //passes in a time instead of a freq so that it performs x steps in y time instead of
     //x steps at y freq to make sure both motors start and stop at the same time. 
-bool xyMotorDriver::startSteps(uint32_t steps, uint32_t segmentUs) {
+bool MotorDriver::startSteps(uint32_t steps, uint32_t segmentUs) {
     if (steps == 0 || steps > MAX_STEPS) return false;
     if (busy) waitDone();  // symbols[] is reused, so the previous burst must be finished
 
@@ -76,13 +76,13 @@ bool xyMotorDriver::startSteps(uint32_t steps, uint32_t segmentUs) {
     return true;
 }
 
-void xyMotorDriver::waitDone() {
+void MotorDriver::waitDone() {
     if (!busy) return;
     ESP_ERROR_CHECK(rmt_tx_wait_all_done(channel, -1));
     busy = false;
 }
 
-void xyMotorDriver::moveSteps(size_t steps, uint32_t freqHz) {
+void MotorDriver::moveSteps(size_t steps, uint32_t freqHz) {
 // if freqHz = 400, then 15rpm. RPM = freq_hz × 60 / (full_steps_per_rev × microstepping)
     if (steps == 0 || steps > MAX_STEPS) return;
     uint32_t halfPeriod = (500000 / freqHz);
@@ -101,13 +101,13 @@ void xyMotorDriver::moveSteps(size_t steps, uint32_t freqHz) {
     ESP_ERROR_CHECK(rmt_tx_wait_all_done(channel, -1));  //make non blocking with ATTR ITRM function
 }
 
-esp_err_t xyMotorDriver::onOff(uint8_t toggle) { //when used must be in ESP_ERROR_CHECK()
+esp_err_t MotorDriver::onOff(uint8_t toggle) { //when used must be in ESP_ERROR_CHECK()
     ESP_RETURN_ON_FALSE(toggle == 0 || toggle == 1, ESP_ERR_INVALID_ARG, TAG,
                          "Toggle must be 0 or 1, got %d", toggle);
     gpio_set_level(enaPin, toggle);
     return ESP_OK;
 }
-esp_err_t xyMotorDriver::dir(uint8_t dir) {
+esp_err_t MotorDriver::dir(uint8_t dir) {
     ESP_RETURN_ON_FALSE(dir == 0 || dir == 1, ESP_ERR_INVALID_ARG, TAG,
                             "Direction must be 0 or 1, got %d", dir);
     gpio_set_level(dirPin, dir);

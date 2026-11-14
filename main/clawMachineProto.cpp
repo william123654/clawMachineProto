@@ -8,9 +8,8 @@
 
 #include "joyStickDriver.hpp"
 #include "joyStickLogic.hpp"
-#include "xyMotorDriver.hpp"
-#include "xyMotorLogic.hpp"
-#include "zMotorDriver.hpp"
+#include "MotorDriver.hpp"
+#include "MotorLogic.hpp"
 #include "position.hpp"
 #include "control.hpp"
 #include "freertos/FreeRTOS.h"
@@ -26,12 +25,9 @@
 constexpr gpio_num_t enaPinX = GPIO_NUM_18;
 constexpr gpio_num_t dirPinX = GPIO_NUM_21;
 constexpr gpio_num_t pulsePinX = GPIO_NUM_5;
-constexpr gpio_num_t enaPinY = GPIO_NUM_23;  //change
-constexpr gpio_num_t dirPinY = GPIO_NUM_22; //change
-constexpr gpio_num_t pulsePinY = GPIO_NUM_4; //change
-constexpr gpio_num_t enaPinZ = GPIO_NUM_13;
-constexpr gpio_num_t dirPinZ = GPIO_NUM_12;
-constexpr gpio_num_t pulsePinZ = GPIO_NUM_14;
+constexpr gpio_num_t enaPinY = GPIO_NUM_23;
+constexpr gpio_num_t dirPinY = GPIO_NUM_22;
+constexpr gpio_num_t pulsePinY = GPIO_NUM_4;
 constexpr gpio_num_t jPinX = GPIO_NUM_33;
 constexpr gpio_num_t jPinY = GPIO_NUM_35;
 constexpr gpio_num_t jPinB = GPIO_NUM_26;
@@ -41,9 +37,8 @@ extern "C" void app_main(void)
 {
 
     // static: these hold big buffers / must outlive app_main's stack frame
-    static driver::xyMotorDriver shoulderDrv(enaPinX, dirPinX, pulsePinX);  // motor at the origin
-    static driver::xyMotorDriver elbowDrv(enaPinY, dirPinY, pulsePinY);     // motor at the joint between l1 and l2
-    static driver::xyMotorDriver dropDrv(enaPinZ, dirPinZ, pulsePinZ);
+    static driver::MotorDriver shoulderDrv(enaPinX, dirPinX, pulsePinX);  // motor at the origin
+    static driver::MotorDriver elbowDrv(enaPinY, dirPinY, pulsePinY);     // motor at the joint between l1 and l2
     static driver::JoyStickDriver stickDrv;
     stickDrv.init();
 
@@ -54,22 +49,19 @@ extern "C" void app_main(void)
                stickDrv.getRawX(), stickDrv.getRawY(), stick.x(), stick.y());
         vTaskDelay(pdMS_TO_TICKS(20));
     }
-    static logic::xyMotorLogic shoulder(shoulderDrv);
-    static logic::xyMotorLogic elbow(elbowDrv);
-    static logic::dropLogic drop(shoulderDrv, elbowDrv, dropDrv);
+    static logic::MotorLogic shoulder(shoulderDrv);
+    static logic::MotorLogic elbow(elbowDrv);
     static logic::Position pos(26.5f, 26.5f); // l1, l2
-    for (int i = 0; i < 200; i++) {
-        printf("%d \n",stickDrv.getRawY());
-        vTaskDelay(pdMS_TO_TICKS(20));
-    }
     control::Config cfg;
-    // cfg.invertShoulder = true;
-    // cfg.invertElbow = false;
-    // cfg.joyInvertX = false;
-    // cfg.joyInvertY = true; // if the tip moves opposite to the stick
-    // cfg.joySwapXY = true;
-    // cfg.vMax = 3;
-    static control::Control ctl(stick, pos, shoulder, elbow, cfg, drop);
+
+    cfg.invertShoulder = false;
+    cfg.invertElbow = false;
+    cfg.joyInvertX = false;
+    cfg.joyInvertY = false;
+    cfg.joySwapXY = false;
+    cfg.elbowAbsolute = false;
+    cfg.vMax = 3;
+    static control::Control ctl(stick, pos, shoulder, elbow, cfg);
     ctl.begin();
     ctl.run();   // never returns
 
